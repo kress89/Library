@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://localhost:8080/nbmis.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hr.kreso.ucenje.dao.BookDao">
+    <select id="fetchBooksByCriteria" resultType="Book" parameterType="map">
+        select b.book_id  as bookId
+        ,      b.title as title
+        ,      b.category_id  as categoryId
+        ,      b.publication_date as publicationDate
+        ,      b.copies_owned as copiesOwned
+        ,      b.status_enum as statusEnum
+        ,      b.description as description
+        from book b
+        <include refid="kriterijPretrage"/>
+        order by    <include refid="ordering"/>
+    </select>
+
+    <select id="countBooksByCriteria" resultType="Integer" parameterType="map">
+        select count(*)
+        from   book b
+        <include refid="kriterijPretrage"/>
+    </select>
+
+    <sql id="kriterijPretrage">
+        <where>
+            <if test="id != null">
+                and b.book_id = #{id}
+            </if>
+            <if test="title != null">
+                and UPPER(b.title) = #{title}
+            </if>
+            <if test="status_enum != null">
+                and b.status_enum = #{status_enum}
+            </if>
+            <if test="description != null">
+                and b.description = #{description}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="ordering">
+        b.book_id
+    </sql>
+
+    <insert id="insertBook" parameterType="Book" useGeneratedKeys="true" keyProperty="bookId" keyColumn="book_id">
+       <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            select   book_seq.nextval
+            from   test
+        </selectKey>
+        insert into Book
+        (        book_id
+        ,        title
+        ,        category_id
+        ,        publication_date
+        ,        copies_owned
+        ,        status_enum
+        ,        description
+        ) values
+        (        #{id, jdbcType=NUMERIC}
+        ,        #{title, jdbcType=VARCHAR}
+        ,        #{categoryId, jdbcType=NUMERIC}
+        ,        #{publicationDate, jdbcType=DATE}
+        ,        #{copiesOwned, jdbcType=NUMERIC}
+        ,        #{statusEnum, jdbcType=VARCHAR}
+        ,        #{description, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateBooks" parameterType="Book" useGeneratedKeys="true" keyProperty="bookId" keyColumn="book_id">
+        update    Book b
+
+        set        b.book_id = #{bookId, jdbcType=NUMERIC}
+        ,          b.title = #{title, jdbcType=VARCHAR}
+        ,          b.category_id = #{categoryId, jdbcType=NUMERIC}
+        ,          b.publication_date = #{publicationDate, jdbcType=DATE}
+        ,          b.copies_owned = #{copiesOwned, jdbcType=NUMERIC}
+        ,          b.status_enum = #{statusEnum, jdbcType=VARCHAR}
+        ,          b.description = #{description, jdbcType=VARCHAR}
+
+                where b.title = #{title}
+    </update>
+</mapper>

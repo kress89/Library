@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://localhost:8080/nbmis.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hr.kreso.ucenje.dao.MemberStatusDao">
+    <select id="fetchMemberStatusByCriteria" resultType="MemberStatus" parameterType="map">
+        select ms.member_status_id  as memberStatusId
+        ,      ms.status_value as statusValue
+        from member_status ms
+        where ms.member_status_id = #{memberStatusId}
+        <include refid="kriterijPretrage"/>
+        order by    <include refid="ordering"/>
+    </select>
+
+    <select id="countMemberStatusByCriteria" resultType="Integer" parameterType="map">
+        select count(*)
+        from   member_status ms
+        <include refid="kriterijPretrage"/>
+    </select>
+
+    <sql id="kriterijPretrage">
+        <where>
+            <if test="id != null">
+                and ms.member_status_id = #{memberStatusId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="ordering">
+        ms.member_status_id
+    </sql>
+
+    <insert id="insertMemberStatus" parameterType="MemberStatus">
+        <!-- <selectKey keyProperty="id" resultType="long" order="BEFORE">
+             select    ${dbSchema}ptl_seq.nextval
+             from    dual
+         </selectKey>-->
+        insert into member_status ms
+        (        ms.member_status_id
+        ,        ms.status_value
+        ) values
+        (        #{memberStatusId, jdbcType=NUMERIC}
+        ,        #{statusValue, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateMemberStatus" parameterType="MemberStatus">
+        update   member_status ms
+        set        m.member_status_id = #{memberStatusId, jdbcType=NUMERIC}
+        ,          m.status_value = #{statusValue, jdbcType=VARCHAR}
+    </update>
+</mapper>

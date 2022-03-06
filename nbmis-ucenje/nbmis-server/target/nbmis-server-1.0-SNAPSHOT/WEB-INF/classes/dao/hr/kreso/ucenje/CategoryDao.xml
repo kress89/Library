@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://localhost:8080/nbmis.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hr.kreso.ucenje.dao.CategoryDao">
+    <select id="fetchCategoriesByCriteria" resultType="Category" parameterType="map">
+        select c.category_id  as categoryId
+        ,      c.category_name as categoryName
+        from category c
+        where c.category_id = #{categoryId}
+        <include refid="kriterijPretrage"/>
+        order by    <include refid="ordering"/>
+    </select>
+
+    <select id="countBooksByCriteria" resultType="Integer" parameterType="map">
+        select count(*)
+        from   category c
+        <include refid="kriterijPretrage"/>
+    </select>
+
+    <sql id="kriterijPretrage">
+        <where>
+            <if test="id != null">
+                and c.category_id = #{categoryId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="ordering">
+        c.category_id
+    </sql>
+
+    <insert id="insertCategories" parameterType="Category">
+        <!-- <selectKey keyProperty="id" resultType="long" order="BEFORE">
+             select    ${dbSchema}ptl_seq.nextval
+             from    dual
+         </selectKey>-->
+        insert into category c
+        (        c.category_id
+        ,        c.category_name
+        ) values
+        (        #{categoryId, jdbcType=NUMERIC}
+        ,        #{categoryName, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateCategories" parameterType="Category">
+        update    category c
+        set        c.category_id = #{categoryId, jdbcType=NUMERIC}
+        ,          c.category_name = #{categoryName, jdbcType=VARCHAR}
+    </update>
+</mapper>

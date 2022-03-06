@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://localhost:8080/nbmis.dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <typeAliases>
+        <typeAlias alias="Author" type="hr.kreso.ucenje.model.Author"/>
+        <typeAlias alias="Book" type="hr.kreso.ucenje.model.Book"/>
+        <typeAlias alias="BookAuthor" type="hr.kreso.ucenje.model.BookAuthor"/>
+        <typeAlias alias="Category" type="hr.kreso.ucenje.model.Category"/>
+        <typeAlias alias="Fine" type="hr.kreso.ucenje.model.Fine"/>
+        <typeAlias alias="FinePayment" type="hr.kreso.ucenje.model.FinePayment"/>
+        <typeAlias alias="Loan" type="hr.kreso.ucenje.model.Loan"/>
+        <typeAlias alias="Member" type="hr.kreso.ucenje.model.Member"/>
+        <typeAlias alias="MemberStatus" type="hr.kreso.ucenje.model.MemberStatus"/>
+        <typeAlias alias="Reservation" type="hr.kreso.ucenje.model.Reservation"/>
+        <typeAlias alias="ReservationStatus" type="hr.kreso.ucenje.model.ReservationStatus"/>
+    </typeAliases>
+
+         <typeHandlers>
+            <typeHandler javaType="hr.kreso.ucenje.model.StatusEnum" handler="hr.kreso.ucenje.mybatis.handler.StatusEnumTypeHandler"/>
+         </typeHandlers>
+
+    <mappers>
+        <mapper resource="dao/hr/kreso/ucenje/AuthorDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/BookDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/BookAuthorDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/CategoryDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/FineDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/FinePaymentDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/LoanDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/MemberDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/MemberStatusDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/ReservationDao.xml"/>
+        <mapper resource="dao/hr/kreso/ucenje/ReservationStatusDao.xml"/>
+    </mappers>
+
+</configuration>

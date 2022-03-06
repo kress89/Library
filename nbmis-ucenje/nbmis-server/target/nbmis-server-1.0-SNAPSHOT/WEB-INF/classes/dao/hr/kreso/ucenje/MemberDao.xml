@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://localhost:8080/nbmis.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hr.kreso.ucenje.dao.MemberDao">
+    <select id="fetchMemberByCriteria" resultType="Member" parameterType="map">
+        select m.member_id  as memberId
+        ,      m.first_name as firstName
+        ,      m.last_name as lastName
+        ,      m.joined_date as joinedDate
+        ,      m.active_status as activeStatus
+        from member m
+        where m.member_id = #{memberId}
+        <include refid="kriterijPretrage"/>
+        order by    <include refid="ordering"/>
+    </select>
+
+    <select id="countMemberByCriteria" resultType="Integer" parameterType="map">
+        select count(*)
+        from   member m
+        <include refid="kriterijPretrage"/>
+    </select>
+
+    <sql id="kriterijPretrage">
+        <where>
+            <if test="id != null">
+                and m.member_id = #{memberId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="ordering">
+        m.member_id
+    </sql>
+
+    <insert id="insertMembers" parameterType="Member">
+        <!-- <selectKey keyProperty="id" resultType="long" order="BEFORE">
+             select    ${dbSchema}ptl_seq.nextval
+             from    dual
+         </selectKey>-->
+        insert into member m
+        (        m.member_id
+        ,        m.first_name
+        ,        m.last_name
+        ,        m.joined_date
+        ,        m.active_status
+        ) values
+        (        #{memberId, jdbcType=NUMERIC}
+        ,        #{firstName, jdbcType=VARCHAR}
+        ,        #{lastName, jdbcType=VARCHAR}
+        ,        #{joinedDate, jdbcType=DATE}
+        ,        #{activeStatus, jdbcType=NUMERIC}
+        )
+    </insert>
+
+    <update id="updateMembers" parameterType="Member">
+        update   member m
+        set        m.member_id = #{memberId, jdbcType=NUMERIC}
+        ,          m.first_name = #{firstName, jdbcType=VARCHAR}
+        ,          m.last_name =#{lastName, jdbcType=VARCHAR}
+        ,          m.joined_date = #{joinedDate, jdbcType=DATE}
+        ,          m.active_status = #{activeStatus, jdbcType=NUMERIC}
+    </update>
+</mapper>

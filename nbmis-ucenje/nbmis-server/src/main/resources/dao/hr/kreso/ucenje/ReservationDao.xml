@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://localhost:8080/nbmis.dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="hr.kreso.ucenje.dao.ReservationDao">
+        <select id="fetchReservationByCriteria" resultType="Reservation" parameterType="map">
+            select r.reservation_id  as reservationId
+            ,      r.book_id as bookId
+            ,      r.member_id as memberId
+            ,      r.reservation_date as reservationDate
+            ,      r.reservation_status as reservationStatus
+            from reservation r
+            where r.reservation_id = #{reservationId}
+            <include refid="kriterijPretrage"/>
+            order by    <include refid="ordering"/>
+        </select>
+
+        <select id="countReservationByCriteria" resultType="Integer" parameterType="map">
+            select count(*)
+            from   reservation r
+            <include refid="kriterijPretrage"/>
+        </select>
+
+        <sql id="kriterijPretrage">
+            <where>
+                <if test="id != null">
+                    and r.reservation_id = #{reservationId}
+                </if>
+            </where>
+        </sql>
+
+        <sql id="ordering">
+            r.reservation_id
+        </sql>
+
+        <insert id="insertReservations" parameterType="Reservation">
+            <!-- <selectKey keyProperty="id" resultType="long" order="BEFORE">
+                 select    ${dbSchema}ptl_seq.nextval
+                 from    dual
+             </selectKey>-->
+            insert into reservation r
+            (        r.reservation_id
+            ,        r.book_id
+            ,        r.member_id
+            ,        r.reservation_date
+            ,        r.reservation_status
+            ) values
+            (        #{reservationId, jdbcType=NUMERIC}
+            ,        #{bookId, jdbcType=NUMERIC}
+            ,        #{memberId, jdbcType=NUMERIC}
+            ,        #{reservationDate, jdbcType=DATE}
+            ,        #{reservationStatus, jdbcType=NUMERIC}
+            )
+        </insert>
+
+        <update id="updateReservations" parameterType="Reservation">
+            update   reservation r
+            set        r.reservation_id = #{reservationId, jdbcType=NUMERIC}
+            ,          r.book_id = #{bookId, jdbcType=NUMERIC}
+            ,          r.member_id =#{memberId, jdbcType=NUMERIC}
+            ,          r.reservation_date = #{reservationDate, jdbcType=DATE}
+            ,          r.reservation_status = #{reservationStatus, jdbcType=NUMERIC}
+        </update>
+</mapper>

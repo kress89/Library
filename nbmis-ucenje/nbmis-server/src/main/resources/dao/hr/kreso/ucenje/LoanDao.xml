@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://localhost:8080/nbmis.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hr.kreso.ucenje.dao.LoanDao">
+    <select id="fetchLoanByCriteria" resultType="Loan" parameterType="map">
+        select l.loan_id  as loanId
+        ,      l.book_id as bookId
+        ,      l.member_id as memberId
+        ,      l.loan_date as loanDate
+        ,      l.returned_date as returnedDate
+        from loan l
+        where l.loan_id = #{loanId}
+        <include refid="kriterijPretrage"/>
+        order by    <include refid="ordering"/>
+    </select>
+
+    <select id="countLoanByCriteria" resultType="Integer" parameterType="map">
+        select count(*)
+        from   loan l
+        <include refid="kriterijPretrage"/>
+    </select>
+
+    <sql id="kriterijPretrage">
+        <where>
+            <if test="id != null">
+                and l.loan_id = #{loanId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="ordering">
+        l.loan_id
+    </sql>
+
+    <insert id="insertLoans" parameterType="Loan">
+        <!-- <selectKey keyProperty="id" resultType="long" order="BEFORE">
+             select    ${dbSchema}ptl_seq.nextval
+             from    dual
+         </selectKey>-->
+        insert into loan l
+        (        l.loan_id
+        ,        l.book_id
+        ,        l.member_id
+        ,        l.loan_date
+        ,        l.returned_date
+        ) values
+        (        #{loanId, jdbcType=NUMERIC}
+        ,        #{bookId, jdbcType=NUMERIC}
+        ,        #{memberId, jdbcType=NUMERIC}
+        ,        #{loanDate, jdbcType=DATE}
+        ,        #{returnedDate, jdbcType=DATE}
+        )
+    </insert>
+
+    <update id="updateLoans" parameterType="Loan">
+        update   loan l
+        set        l.loan_id = #{loanId, jdbcType=NUMERIC}
+        ,          l.book_id = #{bookId, jdbcType=NUMERIC}
+        ,          l.member_id =#{memberId, jdbcType=NUMERIC}
+        ,          l.loan_date = #{paymentDate, jdbcType=DATE}
+        ,          l.return_date = #{returnDate, jdbcType=DATE}
+    </update>
+</mapper>

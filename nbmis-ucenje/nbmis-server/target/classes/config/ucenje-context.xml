@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	   xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd 
+	http://www.springframework.org/schema/util 
+	http://www.springframework.org/schema/util/spring-util.xsd 
+	http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+        http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<context:property-placeholder location="classpath:META-INF/jdbc.properties" ignore-unresolvable="true" />
+
+    <!-- Bez ovoga ne možemo koristiti anotacije npr. Autowired-->
+	<context:annotation-config/>
+
+	<!-- ==============================   FACADE   ============================= -->
+	<bean id="ucenjeFacade" class="hr.kreso.ucenje.facade.impl.UcenjeFacadeImpl"/>
+
+	<!-- ============================== DATASOURCES ============================= -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
+		destroy-method="close">
+		<property name="driverClassName"
+			value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maximumPoolSize" value="5" />
+	</bean>
+
+	<!-- ============================== TRANSACTION CONFIG ============================= -->
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- ============================== SQLSESSION FACTORY CONFIG ============================= -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:config/sql-map-config.xml" />
+	</bean>
+
+	<!-- ==============================   DAO OBJEKTI   ============================= -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- standardni template -->
+	<bean id="templateDao" abstract="true" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+	</bean>
+
+	<bean id="authorDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.AuthorDao" />
+	</bean>
+
+	<bean id="bookDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.BookDao" />
+	</bean>
+
+	<bean id="bookAuthorDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.BookAuthorDao" />
+	</bean>
+
+	<bean id="categoryDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.CategoryDao" />
+	</bean>
+
+	<bean id="fineDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.FineDao" />
+	</bean>
+
+	<bean id="finePaymentDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.FinePaymentDao" />
+	</bean>
+
+	<bean id="loanDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.LoanDao" />
+	</bean>
+
+	<bean id="memberDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.MemberDao" />
+	</bean>
+
+	<bean id="memberStatusDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.MemberStatusDao" />
+	</bean>
+
+	<bean id="reservationDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.ReservationDao" />
+	</bean>
+
+	<bean id="reservationStatusDao" parent="templateDao">
+		<property name="mapperInterface" value="hr.kreso.ucenje.dao.ReservationStatusDao" />
+	</bean>
+
+</beans>

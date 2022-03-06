@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://localhost:8080/nbmis.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hr.kreso.ucenje.dao.FinePaymentDao">
+    <select id="fetchFinePaymentByCriteria" resultType="FinePayment" parameterType="map">
+        select fp.fine_payment_id  as finePaymentId
+        ,      fp.member_id as memberId
+        ,      fp.payment_date as paymentDate
+        ,      fp.payment_amount as paymentAmount
+        from fine_payment fp
+        where fp.fine_payment_id = #{finePaymentId}
+        <include refid="kriterijPretrage"/>
+        order by    <include refid="ordering"/>
+    </select>
+
+    <select id="countFinePaymentByCriteria" resultType="Integer" parameterType="map">
+        select count(*)
+        from   fine_payment fp
+        <include refid="kriterijPretrage"/>
+    </select>
+
+    <sql id="kriterijPretrage">
+        <where>
+            <if test="id != null">
+                and fp.fine_payment_id = #{finePaymentId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="ordering">
+        fp.fine_payment_id
+    </sql>
+
+    <insert id="insertFinePayments" parameterType="FinePayment">
+        <!-- <selectKey keyProperty="id" resultType="long" order="BEFORE">
+             select    ${dbSchema}ptl_seq.nextval
+             from    dual
+         </selectKey>-->
+        insert into fine_payment fp
+        (        fp.fine_payment_id
+        ,        fp.member_id
+        ,        fp.payment_date
+        ,        fp.payment_amount
+        ) values
+        (        #{finePaymentId, jdbcType=NUMERIC}
+        ,        #{memberId, jdbcType=NUMERIC}
+        ,        #{paymentDate, jdbcType=DATE}
+        ,        #{paymentAmount, jdbcType=NUMERIC}
+        )
+    </insert>
+
+    <update id="updateFinePayment" parameterType="FinePayment">
+        update    fine_payment fp
+        set        fp.fine_payment_id = #{finePaymentId, jdbcType=NUMERIC}
+        ,          fp.member_id = #{memberId, jdbcType=NUMERIC}
+        ,          fp.payment_date = #{paymentDate, jdbcType=DATE}
+        ,          fp.payment_amount = #{paymentAmount, jdbcType=NUMERIC}
+    </update>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://localhost:8080/nbmis.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hr.kreso.ucenje.dao.BookAuthorDao">
+
+    <!-- ====================================================================
+    VAŽNO: Prilikom pisanja sql-a, sva imena tablica i procedura treba
+    prefiksirati sa ${dbSchema}, što je placeholder za schemu koji će se
+    prilikom builda zamjeniti sa vrijednšću iz jdbc.properties.
+    ==================================================================== -->
+
+    <select id="fetchBooksAuthorsByCriteria" resultType="BookAuthor" parameterType="map">
+        select ba.book_id   as bookId
+        ,      ba.author_id as authorId
+
+        from book_author ba
+        <include refid="kriterijPretrage"/>
+        order by    <include refid="ordering"/>
+    </select>
+
+    <select id="countBooksAuthorsByCriteria" resultType="Integer" parameterType="map">
+        select count(*)
+        from   book_author ba
+        <include refid="kriterijPretrage"/>
+    </select>
+
+ <!--   <select id="countBooksByAuthorCriteria" resultType="Integer" parameterType="map">
+        select count(*)
+        from   book_author ba
+        <include refid="kriterijPretrageSaDetaljima"/>
+    </select>
+-->
+    <sql id="kriterijPretrage">
+        <where>
+            <if test="id != null">
+                and ba.book_id = #{bookId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="kriterijPretrageSaDetaljima">
+        <where>
+            <if test="id != null">
+                and ba.author_id = #{authorId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="ordering">
+        ba.book_id
+    </sql>
+
+    <insert id="insertBookAuthors" parameterType="BookAuthor">
+        <!--<selectKey keyProperty="id" resultType="long" order="BEFORE">
+            select    ${dbSchema}ptl_seq.nextval
+            from    dual
+        </selectKey>-->
+        insert into BookAuthor ba
+        (        ba.book_id
+        ,        ba.author_id
+        ) values
+        (        #{bookId, jdbcType=NUMERIC}
+        ,        #{authorId, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateBookAuthor" parameterType="BookAuthor">
+        update    BookAuthor ba
+        set        ba.book_id = #{id, jdbcType=NUMERIC}
+        ,          ba.author_id = #{name, jdbcType=VARCHAR}
+    </update>
+</mapper>
